@@ -1,15 +1,24 @@
 module.exports = function(grunt) {
 
 	grunt.initConfig({
-		"file-creator": {
-			global: {
-				"dist/rootclass.js": function(fs, fd, done){
-					var wrapper = grunt.file.read("src/Wrapper.js");
-					var main	= grunt.file.read("src/RootClass.js");
-					wrapper		= wrapper.replace("$RootClass$", main);
-					fs.writeSync(fd, wrapper);
-					done();
-				}
+		concat: {
+			main: {
+				src: [
+					"src/abstract-model.js"
+				],
+				dest: "dist/lr-angular-utils.js"
+			}
+		},
+
+		uglify: {
+			main: {
+				options: {
+					mangle: false
+				},
+				files: [{
+					src: "dist/lr-angular-utils.js",
+					dest: "dist/lr-angular-utils.min.js"
+				}]
 			}
 		},
 
@@ -22,8 +31,8 @@ module.exports = function(grunt) {
 						"bower_components/angular/angular.js",
 						"bower_components/angular-mocks/angular-mocks.js",
 						"bower_components/rootclass/dist/rootclass-angular.js",
-						"src/abstract-model.js",
-						"test/abstract-model-test.js"
+						"dist/lr-angular-utils.min.js",
+						"test/*-test.js"
 					],
 					basePath	: "",
 					frameworks	: ["jasmine"],
@@ -31,7 +40,7 @@ module.exports = function(grunt) {
 					logLevel	: "INFO",
 					autoWatch	: true,
 					browsers	: ["PhantomJS"],
-					singleRun	: false
+					singleRun	: true
 				}
 			}
 		}
@@ -39,5 +48,5 @@ module.exports = function(grunt) {
 
 	require("load-grunt-tasks")(grunt);
 
-	grunt.registerTask("default", ["karma"]);
+	grunt.registerTask("default", ["concat", "uglify", "karma"]);
 };
